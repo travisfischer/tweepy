@@ -67,10 +67,6 @@ def bind_api(**config):
             # See Issue http://github.com/joshthecoder/tweepy/issues/#issue/12
             self.headers['Host'] = self.host
             
-            # Redirects require a special parser.
-            if self.payload_type == 'redirect':
-                self.api.parser = RedirectParser
-
 
         def build_parameters(self, args, kargs):
             self.parameters = {}
