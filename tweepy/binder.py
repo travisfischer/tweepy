@@ -10,6 +10,7 @@ import re
 from tweepy.error import TweepError
 from tweepy.utils import convert_to_utf8_str
 from tweepy.models import Model
+from tweepy.parsers import RedirectParser
 
 re_path_template = re.compile('{\w+}')
 
@@ -65,6 +66,11 @@ def bind_api(**config):
             # This causes Twitter to issue 301 redirect.
             # See Issue http://github.com/joshthecoder/tweepy/issues/#issue/12
             self.headers['Host'] = self.host
+            
+            # Redirects require a special parser.
+            if self.payload_type == 'redirect':
+                self.api.parser = RedirectParser
+
 
         def build_parameters(self, args, kargs):
             self.parameters = {}
@@ -160,15 +166,21 @@ def bind_api(**config):
 
             # If an error was returned, throw an exception
             self.api.last_response = resp
-            if resp.status != 200:
+            
+            # get_profile_image returns a 302 redirect so don't throw an error.
+            if resp.status not in [200, 302]:
                 try:
                     error_msg = self.api.parser.parse_error(resp.read())
                 except Exception:
                     error_msg = "Twitter error response: status code = %s" % resp.status
                 raise TweepError(error_msg, resp)
-
-            # Parse the response payload
-            result = self.api.parser.parse(self, resp.read())
+            
+            if resp.status == 200:
+                # Parse the response payload
+                result = self.api.parser.parse(self, resp.read())
+            elif resp.status == 302:
+                # Parse the redirect
+                result = self.api.parser.parse(self, resp)
 
             conn.close()
 

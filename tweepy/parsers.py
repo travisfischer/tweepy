@@ -27,7 +27,6 @@ class Parser(object):
 
 
 class RawParser(Parser):
-
     def __init__(self):
         pass
 
@@ -66,6 +65,24 @@ class JSONParser(Parser):
             return error['errors']
 
 
+class RedirectParser(Parser):
+
+    payload_format = 'redirect'
+
+    def parse(self, method, response):
+        redirect_dict = {
+            'status' : response.status,
+            'headers' : response.getheaders(),
+            'redirect_url' : response.getheader('location'),
+        }
+        
+        return redirect_dict
+
+    def parse_error(self, response):
+        error = 'Error with Redirect'
+        return error
+
+
 class ModelParser(JSONParser):
 
     def __init__(self, model_factory=None):
@@ -73,12 +90,13 @@ class ModelParser(JSONParser):
         self.model_factory = model_factory or ModelFactory
 
     def parse(self, method, payload):
+        
         try:
             if method.payload_type is None: return
             model = getattr(self.model_factory, method.payload_type)
         except AttributeError:
             raise TweepError('No model for this payload type: %s' % method.payload_type)
-
+        
         json = JSONParser.parse(self, method, payload)
         if isinstance(json, tuple):
             json, cursors = json

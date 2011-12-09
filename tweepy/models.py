@@ -323,7 +323,7 @@ class ModelFactory(object):
     search_result = SearchResult
     list = List
     relation = Relation
-
+    
     json = JSONModel
     ids = IDModel
 

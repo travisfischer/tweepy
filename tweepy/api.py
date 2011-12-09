@@ -42,7 +42,7 @@ class API(object):
     home_timeline = bind_api(
         path = '/statuses/home_timeline.json',
         payload_type = 'status', payload_list = True,
-        allowed_param = ['since_id', 'max_id', 'count', 'page', 'include_rts'],
+        allowed_param = ['since_id', 'max_id', 'count', 'page', 'include_rts', 'include_entities'],
         require_auth = True
     )
 
@@ -77,7 +77,7 @@ class API(object):
         allowed_param = ['id', 'count', 'page'],
         require_auth = True
     )
-
+	
     """/related_results/show/:id.format"""
     related_results = bind_api(
         path = '/related_results/show/{id}.json',
@@ -165,6 +165,12 @@ class API(object):
         path = '/users/show.json',
         payload_type = 'user',
         allowed_param = ['id', 'user_id', 'screen_name']
+    )
+    
+    get_profile_image_url = bind_api(
+        path = '/users/profile_image/',  
+        payload_type = 'redirect',
+        allowed_param = ['screen_name', 'size']
     )
 
     """ Perform bulk look up of users from user ID or screenname """
