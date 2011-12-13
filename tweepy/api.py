@@ -82,7 +82,7 @@ class API(object):
     related_results = bind_api(
         path = '/related_results/show/{id}.json',
         payload_type = 'relation', payload_list = True,
-        allowed_param = ['id'],
+        allowed_param = ['id', 'include_entities'],
         require_auth = False
 	)
 
@@ -122,7 +122,7 @@ class API(object):
     get_status = bind_api(
         path = '/statuses/show.json',
         payload_type = 'status',
-        allowed_param = ['id']
+        allowed_param = ['id', 'include_entities']
     )
 
     """ statuses/update """
@@ -130,7 +130,7 @@ class API(object):
         path = '/statuses/update.json',
         method = 'POST',
         payload_type = 'status',
-        allowed_param = ['status', 'in_reply_to_status_id', 'lat', 'long', 'source', 'place_id'],
+        allowed_param = ['status', 'in_reply_to_status_id', 'lat', 'long', 'source', 'place_id', 'include_entities'],
         require_auth = True
     )
 
@@ -148,7 +148,7 @@ class API(object):
         path = '/statuses/retweet/{id}.json',
         method = 'POST',
         payload_type = 'status',
-        allowed_param = ['id'],
+        allowed_param = ['id', 'include_entities'],
         require_auth = True
     )
 
@@ -156,7 +156,7 @@ class API(object):
     retweets = bind_api(
         path = '/statuses/retweets/{id}.json',
         payload_type = 'status', payload_list = True,
-        allowed_param = ['id', 'count'],
+        allowed_param = ['id', 'count', 'include_entities'],
         require_auth = True
     )
 
